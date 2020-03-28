@@ -1,65 +1,40 @@
-var fixedRect,movingRect;
+const Engine = Matter.Engine;
+const World= Matter.World;
+const Bodies = Matter.Bodies;
 
-function setup() {
-  createCanvas(800,400);
- fixedRect =  createSprite(100,200, 50, 80);
- movingRect = createSprite(300,200,80,50);
+var engine, world;
+var ground,ball;
 
- fixedRect.shapeColor = "green"
- movingRect.shapeColor = "green"
+function setup(){
+    var canvas = createCanvas(400,400);
+    engine = Engine.create();
+    world = engine.world;
 
-fixedRect.velocityX = 3;
-movingRect.velocityX = -4;
+    var ground_options = {
+        isStatic : true
+    }
+
+    var ball_options = {
+      restitution : 1.0
+    }
+
+    ground = Bodies.rectangle(200,390,200,20,ground_options);
+    ball = Bodies.circle(200,100,20,ball_options);
+    World.add(world,ground);
+    World.add(world,ball);
+
+    console.log(ground);
 }
 
-function draw() {
-  background(255,255,255);  
+function draw(){
+    background(0);
 
-   //movingRect.x = World.mouseX
-  //movingRect.y = World.mouseY
+    Engine.update(engine);
 
-  if(isTouching(movingRect,fixedRect)){
-    fixedRect.shapeColor = "red"
-    movingRect.shapeColor = "red"
-   }
-else{
-  fixedRect.shapeColor = "green"
-  movingRect.shapeColor = "green"
-}
+    rectMode(CENTER);
+    rect(ground.position.x,ground.position.y,400,20);
 
-if(movingRect.x-fixedRect.x<fixedRect.width/2+movingRect.width/2
-  &&fixedRect.x-movingRect.x<fixedRect.width/2+movingRect.width/2 )
- { 
-  fixedRect.velocityX = fixedRect.velocityX * (-1);
- }
+    ellipseMode(RADIUS);
+    ellipse(ball.position.x,ball.position.y,20,20);
 
-bounceOff(fixedRect,movingRect);
-
-  drawSprites();
-}
-
-function isTouching(object1,object2){
- if(object1.x-object2.x<object2.width/2+object1.width/2
-  &&object2.x-object1.x<object2.width/2+object1.width/2
-  &&object1.y-object2.y<object2.height/2+object1.height/2
-  &&object2.y-object1.y<object2.height/2+object1.height/2)
-  {
-   return true; 
-  }
- else{
-   return false;
- }
-}
- function bounceOff(paddle1,paddle2){
- if(paddle1.x-paddle2.x<paddle2.width/2+paddle1.width/2
-  &&paddle2.x-paddle1.x<paddle2.width/2+paddle1.width/2
-  &&paddle1.y-paddle2.y<paddle2.height/2+paddle1.height/2
-  &&paddle2.y-paddle1.y<paddle2.height/2+paddle1.height/2)
- {
-paddle1.velocityX = paddle1.velocityX * (-1);
-paddle2.velocityX = paddle2.velocityX * (-1);
-}
-else{
-  return false;
- }
 }
